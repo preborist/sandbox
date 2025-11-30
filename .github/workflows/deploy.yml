@@ -1,0 +1,41 @@
+name: Deploy to GitHub Pages
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+
+        env:
+            REPO_NAME: sandbox
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  cache: "yarn"
+
+            - name: Install dependencies
+              run: yarn install
+
+            - name: Build and Export react-router App
+              run: NODE_ENV=production yarn build
+
+            - name: Deploy to GitHub Pages
+              uses: peaceiris/actions-gh-pages@v4
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+
+                  publish_dir: ./build
+
+                  publish_branch: gh-pages
+
+                  keep_files: false

@@ -10,6 +10,7 @@
     "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,css}' --config ./.prettierrc",
     "typecheck": "react-router typegen && tsc"
   },
+  "homepage": "https://github.com/preborist/sandbox",
   "dependencies": {
     "@react-router/fs-routes": "^7.9.6",
     "@react-router/node": "^7.9.6",
