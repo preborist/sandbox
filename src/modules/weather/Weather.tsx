@@ -6,6 +6,8 @@ import { useState } from 'react';
 import WindCompass from './WindCompass';
 import { useWeather } from './useWeather';
 
+const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
 const Weather = () => {
   const { weather, loading, handleSearch: handleSearchLogic, handleGeoLocation, clearWeather } = useWeather();
   const [cityInput, setCityInput] = useState('');
@@ -75,18 +77,22 @@ const Weather = () => {
 
       {weather && !loading && (
         <div className="flex items-center justify-between gap-4 rounded-lg bg-blue-50 p-4">
-          {/* Temperature */}
           <div>
             <h3 className="mb-2 text-xl font-semibold">{weather.city || 'Unknown city'}</h3>
+            {/* Temperature */}
             <p className="text-4xl font-bold text-blue-600">
               {weather.temperature}
               {weather.units.temperature}
             </p>
           </div>
           {/* Time and date */}
-          <div>
-            <p className="text-xs font-medium text-gray-400">{dayjs().format('ll')}</p>
-            <p className="mb-2 text-xs font-medium text-gray-400">{dayjs().format('LT')}</p>
+          <div className="flex flex-col items-center justify-center">
+            <p className="text-xl font-bold text-gray-800">{dayjs.utc(weather.time).tz(timezone).format('LT')}</p>
+            <p className="mb-2 text-sm text-gray-500">{dayjs.utc(weather.time).tz(timezone).format('ll')}</p>
+            <p className="mt-2 text-center text-xs text-gray-600">
+              <span className="font-semibold">Time is shown for your local timezone:</span> <br />
+              <span className="font-mono text-gray-800">{timezone}</span>
+            </p>
           </div>
           {/* Wind information */}
           <div>

@@ -14,8 +14,10 @@ interface CalendarDayProps {
 const MAX_EVENTS_VISIBLE = 2;
 
 const CalendarDay = memo(({ day, currentDate, dayEvents, onDateClick }: CalendarDayProps) => {
-  const isToday = day.isSame(dayjs(), 'day');
+  const today = dayjs();
+  const isToday = day.isSame(today, 'day');
   const isCurrentMonth = day.isSame(currentDate, 'month');
+  const isPastDay = day.isBefore(today, 'day');
 
   return (
     <button
@@ -23,6 +25,7 @@ const CalendarDay = memo(({ day, currentDate, dayEvents, onDateClick }: Calendar
       className={twMerge(
         'relative cursor-pointer border-r border-b p-2 transition hover:bg-blue-50',
         !isCurrentMonth && 'bg-gray-50 text-gray-400',
+        isPastDay && '&& opacity-50 hover:bg-transparent',
       )}
     >
       <div

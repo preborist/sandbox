@@ -3,12 +3,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import localeData from 'dayjs/plugin/localeData';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import weekday from 'dayjs/plugin/weekday';
 import { useState } from 'react';
 import { Provider as StoreProvider } from 'react-redux';
 import type { LinksFunction } from 'react-router';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
-import { Toaster } from 'sonner'
+import { Toaster } from 'sonner';
 
 import MainLayout from './modules/layout';
 import { store } from './store/store';
@@ -18,6 +20,8 @@ import 'dayjs/locale/uk';
 
 import './index.css';
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
 dayjs.extend(localizedFormat);
 dayjs.extend(weekday);
 dayjs.extend(localeData);

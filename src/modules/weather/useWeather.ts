@@ -10,6 +10,7 @@ interface WeatherData {
   temperature: number;
   windspeed: number;
   winddirection: number;
+  time: string;
   city: string;
   units: Types.GetByCoordinatesResponse['current_weather_units'];
 }
@@ -41,11 +42,11 @@ export const useWeather = (): UseWeatherResult => {
     clearWeather(); // Clear to show loading
     try {
       const {
-        current_weather: { temperature, windspeed, winddirection },
+        current_weather: { temperature, windspeed, winddirection, time },
         current_weather_units,
       } = await getByCoordinatesMt.mutateAsync({ latitude, longitude, current_weather: true });
 
-      setWeather({ temperature, windspeed, winddirection, units: current_weather_units, city });
+      setWeather({ temperature, windspeed, winddirection, time, units: current_weather_units, city });
     } catch (error) {
       toast.error(getAxiosErrorMessage(error) || 'Error fetching weather data');
     }
