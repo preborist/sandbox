@@ -1,9 +1,9 @@
-import { CalendarEvent } from '@src/store/calendarSlice';
-
 import dayjs from 'dayjs';
-import { Edit2, Plus, X } from 'lucide-react';
+import { Plus, SaveIcon, X } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+
+import { CalendarEvent } from '@src/store/calendarSlice';
 
 const MAX_TEXTAREA_HEIGHT = 250;
 
@@ -21,7 +21,7 @@ interface EventFormProps {
   onCancelEdit: () => void;
 }
 
-const EventForm: React.FC<EventFormProps> = ({ initialEvent, initialDate, onSubmit, onCancelEdit }) => {
+const EventForm = ({ initialEvent, initialDate, onSubmit, onCancelEdit }: EventFormProps) => {
   const isEditing = !!initialEvent;
 
   const { register, handleSubmit, reset, formState, watch } = useForm<FormInputs>();
@@ -73,6 +73,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialEvent, initialDate, onSubm
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-3">
+      <p className="font-semibold">{isEditing ? 'Edit Event' : 'New Event'}</p>
       <div className="flex gap-2">
         <input
           type="date"
@@ -90,7 +91,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialEvent, initialDate, onSubm
 
       <div className="flex flex-col gap-2">
         <input
-          autoFocus
           type="text"
           required
           placeholder={isEditing ? 'Change event title...' : 'Add event title...'}
@@ -111,13 +111,13 @@ const EventForm: React.FC<EventFormProps> = ({ initialEvent, initialDate, onSubm
       <div className="flex gap-2">
         <button
           type="submit"
-          className={`rounded p-2 text-white transition disabled:opacity-50 ${isEditing ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-blue-600 hover:bg-blue-700'}`}
+          className="rounded bg-blue-600 p-2 text-white transition hover:bg-blue-700 disabled:opacity-50"
           disabled={!formState.isDirty}
         >
           <div className="flex items-center gap-2">
             {isEditing ? (
               <>
-                <Edit2 size={20} />
+                <SaveIcon size={20} />
                 <span>Update</span>
               </>
             ) : (

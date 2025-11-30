@@ -1,16 +1,15 @@
-import { useMemo, useState } from 'react';
-
 import dayjs from 'dayjs';
 import { ChevronLeft, ChevronRight, Trash2, Edit2 } from 'lucide-react';
-import { useAppDispatch, useAppSelector } from '@src/store/store';
-import { addEvent, CalendarEvent, deleteEvent, editEvent } from '@src/store/calendarSlice';
+import { useMemo, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
+import { addEvent, CalendarEvent, deleteEvent, editEvent } from '@src/store/calendarSlice';
+import { useAppDispatch, useAppSelector } from '@src/store/store';
 import Modal from '@src/ui/Modal';
 
+import CalendarDay from './CalendarDay';
 import EventForm from './EventForm';
 import { generateCalendarGrid } from './calendarUtils';
-import CalendarDay from './CalendarDay';
-import { twMerge } from 'tailwind-merge';
 
 const Planner = () => {
   const dispatch = useAppDispatch();
@@ -76,7 +75,6 @@ const Planner = () => {
       dispatch(addEvent(eventToSave));
     }
     setEditingEvent(null);
-    setIsEventsModalOpen(false);
     setSelectedDay(dayjs(eventToSave.dateTime));
   };
 
@@ -144,8 +142,13 @@ const Planner = () => {
                     event.id === editingEvent?.id && 'border border-blue-500',
                   )}
                 >
-                  <span className="mr-3 font-bold">{dayjs(event.dateTime).format('HH:mm')}</span>
-                  <span className="flex-1 font-medium">{event.title}</span>
+                  <div className="flex">
+                    <p className="mr-3 font-bold">{dayjs(event.dateTime).format('HH:mm')}</p>
+                    <div className="wrap-anywhere">
+                      <p className="mb-1 font-medium">{event.title}</p>
+                      <p className="text-sm">{event.description}</p>
+                    </div>
+                  </div>
                   <div className="flex gap-2">
                     <button onClick={() => handleEditClick(event)} className="text-blue-500 hover:text-blue-700">
                       <Edit2 size={16} />

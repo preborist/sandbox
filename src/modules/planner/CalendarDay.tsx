@@ -1,6 +1,7 @@
-import React from 'react';
 import dayjs from 'dayjs';
+import { memo } from 'react';
 import { twMerge } from 'tailwind-merge';
+
 import { CalendarEvent } from '@src/store/calendarSlice';
 
 interface CalendarDayProps {
@@ -12,12 +13,12 @@ interface CalendarDayProps {
 
 const MAX_EVENTS_VISIBLE = 2;
 
-const CalendarDay: React.FC<CalendarDayProps> = React.memo(({ day, currentDate, dayEvents, onDateClick }) => {
+const CalendarDay = memo(({ day, currentDate, dayEvents, onDateClick }: CalendarDayProps) => {
   const isToday = day.isSame(dayjs(), 'day');
   const isCurrentMonth = day.isSame(currentDate, 'month');
 
   return (
-    <div
+    <button
       onClick={() => onDateClick(day)}
       className={twMerge(
         'relative cursor-pointer border-r border-b p-2 transition hover:bg-blue-50',
@@ -54,7 +55,7 @@ const CalendarDay: React.FC<CalendarDayProps> = React.memo(({ day, currentDate, 
           </span>
         )}
       </div>
-    </div>
+    </button>
   );
 });
 
