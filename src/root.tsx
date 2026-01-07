@@ -1,12 +1,9 @@
-'use client';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import localeData from 'dayjs/plugin/localeData';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import weekday from 'dayjs/plugin/weekday';
-import { useState } from 'react';
 import { Provider as StoreProvider } from 'react-redux';
 import type { LinksFunction } from 'react-router';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
@@ -61,29 +58,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            refetchOnReconnect: true,
-            refetchOnMount: false,
-            refetchOnWindowFocus: false,
-            retry: false,
-            staleTime: 5 * 60 * 1000, // 5 min
-          },
-        },
-      }),
-  );
   return (
-    <QueryClientProvider client={queryClient}>
-      <StoreProvider store={store}>
-        <MainLayout>
-          <Outlet />
-          <Toaster position="top-center" richColors />
-        </MainLayout>
-      </StoreProvider>
-    </QueryClientProvider>
+    <StoreProvider store={store}>
+      <MainLayout>
+        <Outlet />
+        <Toaster position="top-center" richColors />
+      </MainLayout>
+    </StoreProvider>
   );
 }
 

@@ -1,9 +1,9 @@
-import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { weatherApi, geocodingApi } from '@src/apis';
 import toast from '@src/lib/toast';
-import { getAxiosErrorMessage } from '@src/lib/utils/func';
+import { getRTKQueryErrorMessage } from '@src/lib/utils/func';
+import { useLazyGetByCityNameQuery } from '@src/store/apis/geocodingApi';
+import { useLazyGetByCoordinatesQuery } from '@src/store/apis/weatherApi';
 import * as Types from '@src/types';
 
 interface WeatherData {
@@ -27,15 +27,13 @@ interface UseWeatherResult {
 export const useWeather = (): UseWeatherResult => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
 
-  // Mutations
-  const getByCoordinatesMt = useMutation({ mutationFn: weatherApi.getByCoordinates });
-  const getByCityNameMt = useMutation({ mutationFn: geocodingApi.getByCityName });
+  // RTK Query Lazy Hooks
+  const [triggerWeather, weatherResult] = useLazyGetByCoordinatesQuery();
+  const [triggerGeocoding, geocodingResult] = useLazyGetByCityNameQuery();
 
-  const loading = getByCoordinatesMt.isPending || getByCityNameMt.isPending;
+  const loading = weatherResult.isLoading || geocodingResult.isLoading;
 
-  const clearWeather = () => {
-    if (weather) setWeather(null);
-  };
+  const clearWeather = () => setWeather(null);
 
   // 1. Fetch weather by coordinates
   const fetchWeatherByCoords = async (latitude: number, longitude: number, city: string = 'Current location'): Promise<void> => {
@@ -44,11 +42,12 @@ export const useWeather = (): UseWeatherResult => {
       const {
         current_weather: { temperature, windspeed, winddirection, time },
         current_weather_units,
-      } = await getByCoordinatesMt.mutateAsync({ latitude, longitude, current_weather: true });
+      } = await triggerWeather({ latitude, longitude, current_weather: true }).unwrap();
 
       setWeather({ temperature, windspeed, winddirection, time, units: current_weather_units, city });
     } catch (error) {
-      toast.error(getAxiosErrorMessage(error) || 'Error fetching weather data');
+      console.error(error);
+      toast.error(getRTKQueryErrorMessage(error) || 'Error fetching weather data');
     }
   };
 
@@ -57,7 +56,7 @@ export const useWeather = (): UseWeatherResult => {
     if (!city.trim()) return;
 
     try {
-      const { results } = await getByCityNameMt.mutateAsync(city);
+      const { results } = await triggerGeocoding(city).unwrap();
 
       if (!results || results.length === 0) {
         clearWeather();
@@ -68,7 +67,8 @@ export const useWeather = (): UseWeatherResult => {
       const { latitude, longitude, name } = results[0];
       await fetchWeatherByCoords(latitude, longitude, name);
     } catch (error) {
-      toast.error(getAxiosErrorMessage(error) || 'Error searching city');
+      console.error(error);
+      toast.error(getRTKQueryErrorMessage(error) || 'Error searching city');
     }
   };
 
